@@ -1,5 +1,7 @@
 == _game_memory
 Small memory game to be played by two.
+Game project to introduce kids to basic programming concepts, and have fun at the same time.
+
 
 == Contact
 Author:: Sziller
