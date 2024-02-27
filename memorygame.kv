@@ -1,0 +1,27 @@
+#: kivy 2.1.0
+#:set fn_button_big "./fonts/Ubuntu-B.ttf"
+#:set fs_button_big 100
+#:set fn_button "./fonts/Ubuntu-B.ttf"
+#:set fs_button 20
+
+MainLayout:
+
+<ButtonMemory@Button>:
+    font_name: fn_button_big
+    font_size: fs_button_big
+    color: (1, 0, 0, 1)
+
+<MainLayout@BoxLayout>:
+    orientation: "vertical"
+    BoxLayout:
+        size_hint: 1, 0.2
+        LabelTitle:
+            id: board
+            text: "Title"
+    MemoryGame:
+        size_hint: 1, 0.8
+
+<LabelTitle@Label>:
+    font_name: fn_button
+    font_size: fs_button
+    color: (1, 0, 0, 1)
