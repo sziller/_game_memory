@@ -1,6 +1,3 @@
-import time
-
-import kivy
 import sys
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
@@ -37,11 +34,6 @@ class MemoryGame(GridLayout):
             card = self.children[index]
             card.opacity = 100
             
-            
-    # def hide_all_cards(self):
-    #     for child in self.children:
-    #         index = (self.children.index(child))
-    #         child.background_normal = './data/cards/0.png'
  
     def load_cards(self):
         # Load the icons
@@ -53,11 +45,13 @@ class MemoryGame(GridLayout):
             self.cards[i + 1] = icon
         random.shuffle(self.cards)  # Shuffle the cards
 
+
     def setup_board(self, dt=None):
         for card in self.cards:
             btn = ButtonMemory(text='', background_normal='./data/cards/0.png', on_release=self.on_card_click)
             # btn.color = (0, 0, 0, 1)  # Set text color to black
             self.add_widget(btn)
+
 
     def on_card_click(self, instance):
         if not self.removing_cards and instance.background_normal == './data/cards/0.png':
@@ -107,8 +101,8 @@ class MemoryGame(GridLayout):
             self.reveal_all_cards()
         else:
             App.get_running_app().root.ids["board"].text = ("It is player-{}'s turn\n"
-                                                        "p1: {}\n"
-                                                        "p2: {}").format({True: '1', False: "2"}[self.player1_turn],
+                                                            "p1: {}\n"
+                                                            "p2: {}").format({True: '1', False: "2"}[self.player1_turn],
                                                                          self.scores[True], self.scores[False])
 
     def reset_unmatched_cards(self, dt):
