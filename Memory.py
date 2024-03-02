@@ -1,15 +1,42 @@
+"""Small Memory game-app using kivy
+by Sziller"""
+
+import os
 import sys
+import random
+import inspect
 from kivy.app import App
+from kivy.core.window import Window
+from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.properties import ListProperty
 from kivy.clock import Clock
-import random
+import dotenv
+import config as conf
+
+from GameBasePackage.WidgetClasses import *
 
 
 class ButtonMemory(Button):
     pass
-    
+
+
+class GameScreenManager(ScreenManager):
+    def __init__(self, **kwargs):
+        super(GameScreenManager, self).__init__(**kwargs)
+        self.statedict = {
+            "screen_intro": {
+                "seq": 0,
+                'inst': "button_nav_intro",
+                'down': ["button_nav_intro"],
+                'normal': ["button_nav_game"]},
+            "screen_game": {
+                "seq": 1,
+                'inst': 'button_nav_game',
+                'down': ['button_nav_game'],
+                'normal': ["button_nav_intro"]}
+            }
     
 class MemoryGame(GridLayout):
     cards = ListProperty([])
@@ -113,11 +140,33 @@ class MemoryGame(GridLayout):
         self.selected_cards.clear()
 
 
+class OpAreaIntro(OperationAreaBox):
+    ccn = inspect.currentframe().f_code.co_name
+
+    def __init__(self, **kwargs):
+        super(OpAreaIntro, self).__init__(**kwargs)
+
+    def on_init(self):
+        """=== Method name: on_init ====================================================================================
+        Default method to run right after startup (or whenever defaulting back to initial state is necessary)
+        ========================================================================================== by Sziller ==="""
+        print("Started: {}".format(self.ccn))
+
 class MemoryGameApp(App):
     def __init__(self, window_content = ""):
         super(MemoryGameApp, self).__init__()
         self.title: str = "Memory"
         self.window_content = window_content
+    
+    def change_screen(self, screen_name, screen_direction="left"):
+        """=== Method name: change_screen ==============================================================================
+        Use this screenchanger instead of the built-in method for more customizability and to enable further
+        actions before changing the screen.
+        Also, if screenchanging first needs to be validated, use this method!
+        ========================================================================================== by Sziller ==="""
+        smng = self.root  # 'root' refers to the only one root instance in your App. Here it is the actual ROOT
+        smng.current = screen_name
+        smng.transition.direction = screen_direction
         
     def build(self):
         return self.window_content
@@ -125,6 +174,32 @@ class MemoryGameApp(App):
 
 if __name__ == '__main__':
     from kivy.lang import Builder  # to freely pick kivy files
+    DOTENV_PATH = "./.env"
+
+    # Define different display settings based on an index.
+    # 0: Full-screen on any display,
+    # 1: Portrait,
+    # 2: Elongated Portrait,
+    # 3: Raspberry Pi touchscreen - Landscape,
+    # 4: Raspberry Pi touchscreen - Portrait,
+    # 5: Large square
+    display_settings = {0: {'fullscreen': False, 'run': Window.maximize},  # Full-screen on any display
+                        1: {'fullscreen': False, 'size': (600, 1000)},  # Portrait
+                        2: {'fullscreen': False, 'size': (500, 1000)},  # Portrait elongated
+                        3: {'fullscreen': False, 'size': (640, 480)},  # Raspi touchscreen - landscape
+                        4: {'fullscreen': False, 'size': (480, 640)},  # Raspi touchscreen - portrait
+                        5: {'fullscreen': False, 'size': (1200, 1200)}  # Large square
+                        }
+
+    dotenv.load_dotenv(DOTENV_PATH)
+    style_code = int(os.getenv("SCREENMODE"))
+
+    Window.fullscreen = display_settings[style_code]['fullscreen']
+    if 'size' in display_settings[style_code].keys(): Window.size = display_settings[style_code]['size']
+    if 'run' in display_settings[style_code].keys(): display_settings[style_code]['run']()
+
+    # Load a specified Kivy file from the command-line argument or a default file.
+    
     try:
         content = Builder.load_file(str(sys.argv[1]))
     except IndexError:
@@ -132,3 +207,7 @@ if __name__ == '__main__':
         
     application = MemoryGameApp(window_content=content)
     application.run()
+
+
+
+# App.get_running_app().change_screen(screen_name="screen_disp", screen_direction="right")

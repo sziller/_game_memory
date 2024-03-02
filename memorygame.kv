@@ -3,8 +3,76 @@
 #:set fs_button_big 100
 #:set fn_button "./fonts/Ubuntu-B.ttf"
 #:set fs_button 20
+#:set clr_wallet_bck (0.137, 0.145, 0.2, 1)
 
-MainLayout:
+## ------------------------------------------------------------------
+## transitions imported for screenchanges:
+## ------------------------------------------------------------------
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+## -----------------------------------------------------------------------------
+#:import CardTransition kivy.uix.screenmanager.CardTransition
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import FallOutTransition kivy.uix.screenmanager.FallOutTransition
+#:import RiseInTransition kivy.uix.screenmanager.RiseInTransition
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+#:import WipeTransition kivy.uix.screenmanager.WipeTransition
+
+<GameScreenManager@ScreenManager>:
+    transition: NoTransition()
+
+<OperationAreaBox@BoxLayout>:
+    spacing: 5
+    padding: 20, 0, 20, 0
+    orientation: "vertical"
+
+GameScreenManager:
+    id: "ThisIsYourROOTWidget"
+    canvas.before:
+        Color:
+            rgba: clr_wallet_bck
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            # source: background_image
+    ScreenIntro:
+        id: screen_intro
+    ScreenGame:
+        id: screen_btc
+
+
+<ScreenIntro@Screen>:
+    name: "screen_intro"
+    InScreenWindow:  ## Screen class is a widget, it is not filled up automatically
+        OpAreaIntro:
+            size_hint: 1, 1
+            id: oparea_intro
+
+<ScreenGame@Screen>:
+    name: "screen_game"
+    InScreenWindow:  ## Screen class is a widget, it is not filled up automatically
+        LabelTitle:
+            size_hint: 1, 0.2
+            id: board
+            text: "Title"
+        OpAreaGame:
+            size_hint: 1, 0.8
+            id: oparea_game
+
+<OpAreaIntro@OperationAreaBox>:
+    Label:
+        text: "Intro"
+    Button:
+        text: "Game"
+
+<OpAreaGame@OperationAreaBox>:
+    MemoryGame:
+        size_hint: 1, 1
+
+
+
+<InScreenWindow@BoxLayout>:
+    orientation: "vertical"
 
 <ButtonMemory@Button>:
     font_name: fn_button_big
