@@ -19,7 +19,7 @@
 #:import WipeTransition kivy.uix.screenmanager.WipeTransition
 
 <GameScreenManager@ScreenManager>:
-    transition: NoTransition()
+    transition: FadeTransition()
 
 <OperationAreaBox@BoxLayout>:
     spacing: 5
@@ -38,7 +38,7 @@ GameScreenManager:
     ScreenIntro:
         id: screen_intro
     ScreenGame:
-        id: screen_btc
+        id: screen_game
 
 
 <ScreenIntro@Screen>:
@@ -61,12 +61,28 @@ GameScreenManager:
 
 <OpAreaIntro@OperationAreaBox>:
     Label:
-        text: "Intro"
+        text: "Welcome"
+    BoxLayout:
+        orianetation: "horizontal"
+        Button:
+            id: gamesize_4x3
+            text: "small"
+            on_release: root.on_release_size(self)
+        Button:
+            id: gamesize_6x4
+            text: "medium"
+            on_release: root.on_release_size(self)
+        Button:
+            id: gamesize_8x5
+            text: "large"
+            on_release: root.on_release_size(self)
     Button:
-        text: "Game"
+        text: "Play"
+        on_release: root.on_release_to_game() 
 
 <OpAreaGame@OperationAreaBox>:
     MemoryGame:
+        id: game_memory
         size_hint: 1, 1
 
 

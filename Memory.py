@@ -44,14 +44,24 @@ class MemoryGame(GridLayout):
 
     def __init__(self, **kwargs):
         super(MemoryGame, self).__init__(**kwargs)
-        self.cols = 8
-        self.rows = 5
+        self.cols: int = 8
+        self.rows: int = 8
+        
+        # self.load_cards()
+        # Clock.schedule_once(self.setup_board)
+        # self.setup_board()
+        self.scores = {True: 0, False: 0}
+        # self.run()
+        
+    def run(self):
         self.max_icons = self.rows * self.cols // 2  # Maximum number of different icons
         self.icons = list(range(1, self.max_icons + 1))  # Icons range from 0 to max_icons - 1
         self.player1_turn = True
         self.selected_cards = []
         self.load_cards()
         # Clock.schedule_once(self.setup_board)
+        print(self.cols)
+        print(self.rows)
         self.setup_board()
         self.scores = {True: 0, False: 0}
     
@@ -66,6 +76,8 @@ class MemoryGame(GridLayout):
         # Load the icons
         self.cards = [0] * (self.rows * self.cols)
         for i in range(0, len(self.cards), 2):
+            print("+++++")
+            print(self.icons)
             icon = random.choice(self.icons)
             self.icons.remove(icon)
             self.cards[i] = icon
@@ -74,10 +86,17 @@ class MemoryGame(GridLayout):
 
 
     def setup_board(self, dt=None):
+        c = 0
+        print("!!!")
+        print(self.cards)
+        print("!!!")
+        
         for card in self.cards:
+            print("---: {} : {}".format(c, card))
             btn = ButtonMemory(text='', background_normal='./data/cards/0.png', on_release=self.on_card_click)
             # btn.color = (0, 0, 0, 1)  # Set text color to black
             self.add_widget(btn)
+            c += 1
 
 
     def on_card_click(self, instance):
@@ -85,6 +104,7 @@ class MemoryGame(GridLayout):
             index = self.children.index(instance)
             self.flip_card(index)
             self.check_match()
+        
         
     def flip_card(self, index):
         if index not in self.selected_cards:
@@ -124,13 +144,11 @@ class MemoryGame(GridLayout):
                 txt = "Player 1 Won: {} : {}".format(p1_score, p2_score)
             else:
                 txt = "Player 2 Won: {} : {}".format(p2_score, p1_score)
-            App.get_running_app().root.ids["board"].text = str(txt)
+            App.get_running_app().root.ids.screen_game.ids["board"].text = str(txt)
             self.reveal_all_cards()
         else:
-            App.get_running_app().root.ids["board"].text = ("It is player-{}'s turn\n"
-                                                            "p1: {}\n"
-                                                            "p2: {}").format({True: '1', False: "2"}[self.player1_turn],
-                                                                         self.scores[True], self.scores[False])
+            App.get_running_app().root.ids.screen_game.ids["board"].text = ("It is player-{}'s turn\np1: {}\np2: {}".
+                format({True: '1', False: "2"}[self.player1_turn], self.scores[True], self.scores[False]))
 
     def reset_unmatched_cards(self, dt):
         for index in self.selected_cards:
@@ -145,13 +163,26 @@ class OpAreaIntro(OperationAreaBox):
 
     def __init__(self, **kwargs):
         super(OpAreaIntro, self).__init__(**kwargs)
-
+    
     def on_init(self):
         """=== Method name: on_init ====================================================================================
         Default method to run right after startup (or whenever defaulting back to initial state is necessary)
         ========================================================================================== by Sziller ==="""
         print("Started: {}".format(self.ccn))
+        
+    def on_release_to_game(self):
+        print("to game")
+        App.get_running_app().change_screen(screen_name="screen_game", screen_direction="right")
 
+    def on_release_size(self, inst):
+        _id_ = list(self.ids.keys())[list(self.ids.values()).index(inst)]
+        x, y = _id_.split(sep="_")[1].split(sep="x")
+        print(x)
+        print(y)
+        App.get_running_app().root.ids.screen_game.ids.oparea_game.ids.game_memory.cols = int(x)
+        App.get_running_app().root.ids.screen_game.ids.oparea_game.ids.game_memory.rows = int(y)
+        App.get_running_app().root.ids.screen_game.ids.oparea_game.ids.game_memory.run()
+        
 class MemoryGameApp(App):
     def __init__(self, window_content = ""):
         super(MemoryGameApp, self).__init__()
@@ -188,7 +219,8 @@ if __name__ == '__main__':
                         2: {'fullscreen': False, 'size': (500, 1000)},  # Portrait elongated
                         3: {'fullscreen': False, 'size': (640, 480)},  # Raspi touchscreen - landscape
                         4: {'fullscreen': False, 'size': (480, 640)},  # Raspi touchscreen - portrait
-                        5: {'fullscreen': False, 'size': (1200, 1200)}  # Large square
+                        5: {'fullscreen': False, 'size': (1200, 1200)},  # Large square
+                        6: {'fullscreen': False, 'size': (600, 600)}  # Midsize square
                         }
 
     dotenv.load_dotenv(DOTENV_PATH)
@@ -210,4 +242,4 @@ if __name__ == '__main__':
 
 
 
-# App.get_running_app().change_screen(screen_name="screen_disp", screen_direction="right")
+
