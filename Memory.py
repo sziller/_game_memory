@@ -44,9 +44,9 @@ class MemoryGame(GridLayout):
 
     def __init__(self, **kwargs):
         super(MemoryGame, self).__init__(**kwargs)
-        self.cols: int = 8
-        self.rows: int = 8
-        
+        self.cols: int      = 8
+        self.rows: int      = 8
+        self.spacing: int   = 5
         # self.load_cards()
         # Clock.schedule_once(self.setup_board)
         # self.setup_board()
@@ -172,6 +172,7 @@ class OpAreaIntro(OperationAreaBox):
         
     def on_release_to_game(self):
         print("to game")
+        App.get_running_app().root.ids.screen_game.ids.oparea_game.ids.game_memory.run()
         App.get_running_app().change_screen(screen_name="screen_game", screen_direction="right")
 
     def on_release_size(self, inst):
@@ -181,7 +182,7 @@ class OpAreaIntro(OperationAreaBox):
         print(y)
         App.get_running_app().root.ids.screen_game.ids.oparea_game.ids.game_memory.cols = int(x)
         App.get_running_app().root.ids.screen_game.ids.oparea_game.ids.game_memory.rows = int(y)
-        App.get_running_app().root.ids.screen_game.ids.oparea_game.ids.game_memory.run()
+        
         
 class MemoryGameApp(App):
     def __init__(self, window_content = ""):
